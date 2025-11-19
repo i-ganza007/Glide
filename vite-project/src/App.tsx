@@ -3,16 +3,23 @@ import { OrbitControls, Html } from "@react-three/drei"
 import Rectangle from "./Components/Rectangle"
 import Box from "./Components/Box"
 import { ControlPanel } from "./Components/ControlPanel"
-
+import { useMeshStore } from "./meshStore/meshStore"
 function App() {
+  const meshStore = useMeshStore(state=>state.meshObjectStore)
+  const meshArr = meshStore.map((x,idx)=>{
+    if(x.type == "box"){
+      return <Box key={idx} position={x.pos} />
+    }
+    return <Rectangle key={idx} position={x.pos} />
+  })
   return (
     <Canvas className="bg-black w-full h-screen">
       <ambientLight intensity={0.5} />
       <directionalLight position={[3, 2, 3]} />
 
-      <Box />
-      <Rectangle />
-
+      {/* <Box />
+      <Rectangle /> */}
+      {meshArr}
       <OrbitControls />
 
       {/* Floating UI inside the scene */}
