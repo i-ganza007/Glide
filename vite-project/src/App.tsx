@@ -6,11 +6,12 @@ import { ControlPanel } from "./Components/ControlPanel"
 import { useMeshStore } from "./meshStore/meshStore"
 function App() {
   const meshStore = useMeshStore(state=>state.meshObjectStore)
+  const activeWires = useMeshStore(state=>state.activeWires)
   const meshArr = meshStore.map((x,idx)=>{
     if(x.type == "box"){
-      return <Box key={idx} position={x.pos} />
+      return <Box key={idx} position={x.pos} wireFrame={activeWires}/>
     }
-    return <Rectangle key={idx} position={x.pos} />
+    return <Rectangle key={idx} position={x.pos} wireFrame={activeWires}/>
   })
   return (
     <Canvas className="bg-black w-full h-screen">
@@ -20,7 +21,7 @@ function App() {
       {/* <Box />
       <Rectangle /> */}
       {meshArr}
-      <OrbitControls />
+      <OrbitControls makeDefault />
 
       {/* Floating UI inside the scene */}
       <Html fullscreen>

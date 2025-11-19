@@ -1,3 +1,4 @@
+import { DragControls } from "@react-three/drei"
 import { useRef } from "react"
 // import { useFrame } from "@react-three/fiber"
 interface RectangleBox {
@@ -9,6 +10,7 @@ interface RectangleBox {
 }
 function Rectangle({position=[2,1,1],scale=0.5,args=[0.86,0.89,4],wireFrame=false,color="orange"}:RectangleBox) {
     const refer = useRef(null)
+    const controls = useRef(null)
     // useFrame((state,delta)=>{
     //     if(refer.current){
     //     //@ts-ignore
@@ -18,10 +20,12 @@ function Rectangle({position=[2,1,1],scale=0.5,args=[0.86,0.89,4],wireFrame=fals
 
     // })
   return (
-    <mesh position={[...position]} ref={refer} scale={scale}>
+    <DragControls ref={controls}>
+      <mesh position={[...position]} ref={refer} scale={scale}>
         <boxGeometry args={[...args]}/>
         <meshStandardMaterial color={color} wireframe={wireFrame} />
-    </mesh>
+      </mesh>
+    </DragControls>
   )
 }
 
