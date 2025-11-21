@@ -1,7 +1,5 @@
 import { Square, RectangleHorizontal, SquareDashed } from "lucide-react"
 import {useMeshStore} from "../meshStore/meshStore"
-import Box from "../Components/Box"
-import Rectangle from "./Rectangle"
 import {
   ToggleGroup,
   ToggleGroupItem,
@@ -10,16 +8,15 @@ import {
 export function ControlPanel() {
     const [rect_x , rect_y,rect_z]:Number[] = [Math.random()*2,Math.random(),Math.random()]
     const [box_x , box_y,box_z]:Number[] = [Math.random()*2,Math.random(),Math.random()]
-    // const meshObjectStore = useMeshStore((state)=>state.meshObjectStore)
     const addMeshObject = useMeshStore(state=>state.addMeshObject)
     const changeActiveWires = useMeshStore(state=>state.changeActiveWires)
     const handleCreateBox = () => {
-        addMeshObject({type:"box",pos:[box_x,box_y,box_z]})
+        addMeshObject({uid:crypto.randomUUID(),type:"box",pos:[box_x,box_y,box_z],visible:true,color:"red"})
         console.log(useMeshStore?.getState().meshObjectStore)
         return null
     }
     const handleCreateRectangle = () => {
-        addMeshObject({type:"rectangle",pos:[rect_x,rect_y,rect_z]})
+        addMeshObject({uid:crypto.randomUUID(),type:"rectangle",pos:[rect_x,rect_y,rect_z],visible:true,color:"orange"})
         console.log(useMeshStore.getState().meshObjectStore)
         return null
     }

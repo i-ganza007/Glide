@@ -18,12 +18,10 @@ function App() {
       <ambientLight intensity={0.5} />
       <directionalLight position={[3, 2, 3]} />
 
-      {/* <Box />
-      <Rectangle /> */}
       <Select box>{meshArr}</Select>
       <OrbitControls makeDefault />
-
-      {/* Floating UI inside the scene */}
+      <axesHelper args={[100]}/>
+      <gridHelper />
       <Html fullscreen>
         <div className="absolute bottom-10 left-1/2">
           <ControlPanel />
