@@ -1,16 +1,140 @@
 import { DragControls } from "@react-three/drei"
-import { useRef } from "react"
-// import { useFrame } from "@react-three/fiber"
-interface RectangleBox {
-  position:Number[]
-  scale:Number
-  args:Number[]
-  wireFrame:Boolean
-  color:String
+import { useRef, useEffect } from "react"
+import { useMeshStore } from "../meshStore/meshStore"
+import { Mesh } from "three"
+import { useControls } from "leva"
+import { calculateDistance, determineJointType, getTubeDimensions } from "../utils/jointDetection"
+
+interface MeshObject {
+  uid: string;
+  type: string;
+  pos: [number, number, number];
+  rotation: [number, number, number];
+  scale: [number, number, number];
+  visible: boolean;
+  color: string;
+  tubeParams: {
+    width: number;
+    height: number;
+    length: number;
+    thickness: number;
+  };
+  joints: string[];
 }
-function Rectangle({position=[2,1,1],scale=0.5,args=[0.86,0.89,4],wireFrame=false,color="orange"}:RectangleBox) {
-    const refer = useRef(null)
+
+interface RectangleBox {
+  mesh: MeshObject;
+  args?: [number, number, number];
+  wireFrame: boolean;
+}
+
+function Rectangle({mesh, args=[0.86,0.89,4], wireFrame=false}: RectangleBox) {
+    const refer = useRef<Mesh>(null)
     const controls = useRef(null)
+    const updateMeshPosition = useMeshStore(state => state.updateMeshPosition);
+    const updateMeshRotation = useMeshStore(state => state.updateMeshRotation);
+    const updateMeshScale = useMeshStore(state => state.updateMeshScale);
+    const updateMeshColor = useMeshStore(state => state.updateMeshColor);
+    const updateMeshVisibility = useMeshStore(state => state.updateMeshVisibility);
+    const addJointPreview = useMeshStore(state => state.addJointPreview);
+    const clearJointPreviews = useMeshStore(state => state.clearJointPreviews);
+    const allMeshes = useMeshStore(state => state.meshObjectStore);
+
+    const rectControls = useControls(`Rectangle ${mesh.uid.slice(0, 8)}`, {
+      position: {
+        value: { x: mesh.pos[0], y: mesh.pos[1], z: mesh.pos[2] },
+        step: 0.1
+      },
+      rotation: {
+        value: { 
+          x: (mesh.rotation[0] * 180) / Math.PI, 
+          y: (mesh.rotation[1] * 180) / Math.PI, 
+          z: (mesh.rotation[2] * 180) / Math.PI 
+        },
+        step: 1,
+        min: -360,
+        max: 360
+      },
+      scale: {
+        value: { x: mesh.scale[0], y: mesh.scale[1], z: mesh.scale[2] },
+        min: 0.1,
+        max: 3,
+        step: 0.1
+      },
+      size: {
+        value: { width: args[0], height: args[1], depth: args[2] },
+        min: 0.1,
+        max: 10,
+        step: 0.1
+      },
+      color: { value: mesh.color },
+      visible: { value: mesh.visible }
+    });
+
+    useEffect(() => {
+      updateMeshPosition(mesh.uid, [rectControls.position.x, rectControls.position.y, rectControls.position.z]);
+    }, [rectControls.position, mesh.uid, updateMeshPosition]);
+
+    useEffect(() => {
+      const radianRotation: [number, number, number] = [
+        (rectControls.rotation.x * Math.PI) / 180,
+        (rectControls.rotation.y * Math.PI) / 180,
+        (rectControls.rotation.z * Math.PI) / 180
+      ];
+      updateMeshRotation(mesh.uid, radianRotation);
+    }, [rectControls.rotation, mesh.uid, updateMeshRotation]);
+
+    useEffect(() => {
+      updateMeshScale(mesh.uid, [rectControls.scale.x, rectControls.scale.y, rectControls.scale.z]);
+    }, [rectControls.scale, mesh.uid, updateMeshScale]);
+
+    useEffect(() => {
+      updateMeshColor(mesh.uid, rectControls.color);
+    }, [rectControls.color, mesh.uid, updateMeshColor]);
+
+    useEffect(() => {
+      updateMeshVisibility(mesh.uid, rectControls.visible);
+    }, [rectControls.visible, mesh.uid, updateMeshVisibility]);
+
+    useEffect(() => {
+      const otherMeshes = allMeshes.filter(m => m.uid !== mesh.uid);
+      const proximityThreshold = 2;
+      
+      clearJointPreviews();
+      
+      otherMeshes.forEach(otherMesh => {
+        const distance = calculateDistance(mesh, otherMesh);
+        if (distance < proximityThreshold) {
+          const jointPos: [number, number, number] = [
+            (mesh.pos[0] + otherMesh.pos[0]) / 2,
+            (mesh.pos[1] + otherMesh.pos[1]) / 2,
+            (mesh.pos[2] + otherMesh.pos[2]) / 2
+          ];
+          
+          const angleDiff = Math.abs(
+            ((mesh.rotation[1] - otherMesh.rotation[1]) * 180) / Math.PI
+          );
+          
+          const jointType = determineJointType(mesh, otherMesh);
+          const mesh1Params = getTubeDimensions(mesh, args);
+          const mesh2Params = getTubeDimensions(otherMesh, args);
+          
+          addJointPreview(mesh.uid, otherMesh.uid, jointPos, angleDiff, jointType, mesh1Params, mesh2Params);
+        }
+      });
+    }, [mesh.pos, mesh.rotation, allMeshes, mesh.uid, addJointPreview, clearJointPreviews, args]);
+    
+    const handleDragEnd = () => {
+      if (refer.current) {
+        const position: [number, number, number] = [
+          refer.current.position.x,
+          refer.current.position.y,
+          refer.current.position.z
+        ];
+        updateMeshPosition(mesh.uid, position);
+      }
+    };
+
     // useFrame((state,delta)=>{
     //     if(refer.current){
     //     //@ts-ignore
@@ -20,10 +144,20 @@ function Rectangle({position=[2,1,1],scale=0.5,args=[0.86,0.89,4],wireFrame=fals
 
     // })
   return (
-    <DragControls ref={controls}>
-      <mesh position={[...position]} ref={refer} scale={scale}>
-        <boxGeometry args={[...args]}/>
-        <meshStandardMaterial color={color} wireframe={wireFrame} />
+    <DragControls ref={controls} onDragEnd={handleDragEnd}>
+      <mesh 
+        position={[rectControls.position.x, rectControls.position.y, rectControls.position.z]} 
+        ref={refer}
+        rotation={[
+          (rectControls.rotation.x * Math.PI) / 180,
+          (rectControls.rotation.y * Math.PI) / 180,
+          (rectControls.rotation.z * Math.PI) / 180
+        ]}
+        scale={[rectControls.scale.x, rectControls.scale.y, rectControls.scale.z]}
+        visible={rectControls.visible}
+      >
+        <boxGeometry args={[rectControls.size.width, rectControls.size.height, rectControls.size.depth]}/>
+        <meshStandardMaterial color={rectControls.color} wireframe={wireFrame} />
       </mesh>
     </DragControls>
   )

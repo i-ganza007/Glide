@@ -1,22 +1,49 @@
 import { Square, RectangleHorizontal, SquareDashed } from "lucide-react"
 import {useMeshStore} from "../meshStore/meshStore"
-import {
-  ToggleGroup,
-  ToggleGroupItem,
-} from "@/Components/ui/toggle-group"
+import {ToggleGroup,ToggleGroupItem,} from "@/Components/ui/toggle-group"
 
 export function ControlPanel() {
-    const [rect_x , rect_y,rect_z]:Number[] = [Math.random()*2,Math.random(),Math.random()]
-    const [box_x , box_y,box_z]:Number[] = [Math.random()*2,Math.random(),Math.random()]
-    const addMeshObject = useMeshStore(state=>state.addMeshObject)
-    const changeActiveWires = useMeshStore(state=>state.changeActiveWires)
+    const [rect_x , rect_y,rect_z] = [Math.random()*2,Math.random(),Math.random()]
+    const [box_x , box_y,box_z] = [Math.random()*2,Math.random(),Math.random()]
+    const addMeshObject = useMeshStore(state => state.addMeshObject)
+    const changeActiveWires = useMeshStore(state => state.changeActiveWires)
     const handleCreateBox = () => {
-        addMeshObject({uid:crypto.randomUUID(),type:"box",pos:[box_x,box_y,box_z],visible:true,color:"red"})
+        addMeshObject({
+            uid:crypto.randomUUID(),
+            type:"box",
+            pos:[box_x,box_y,box_z],
+            rotation:[0,0,0],
+            scale:[1,1,1],
+            visible:true,
+            color:"red",
+            tubeParams: {
+                width: 0.3,
+                height: 0.9,
+                length: 0.3,
+                thickness: 0.05
+            },
+            joints: []
+        })
         console.log(useMeshStore?.getState().meshObjectStore)
         return null
     }
     const handleCreateRectangle = () => {
-        addMeshObject({uid:crypto.randomUUID(),type:"rectangle",pos:[rect_x,rect_y,rect_z],visible:true,color:"orange"})
+        addMeshObject({
+            uid:crypto.randomUUID(),
+            type:"rectangle",
+            pos:[rect_x,rect_y,rect_z],
+            rotation:[0,0,0],
+            scale:[1,1,1],
+            visible:true,
+            color:"orange",
+            tubeParams: {
+                width: 0.86,
+                height: 0.89,
+                length: 4,
+                thickness: 0.05
+            },
+            joints: []
+        })
         console.log(useMeshStore.getState().meshObjectStore)
         return null
     }
