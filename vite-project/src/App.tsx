@@ -3,15 +3,17 @@ import { OrbitControls, Html, Select } from "@react-three/drei"
 import Rectangle from "./Components/Rectangle"
 import Box from "./Components/Box"
 import { ControlPanel } from "./Components/ControlPanel"
+import { JointHighlights } from "./Components/JointHighlight"
 import { useMeshStore } from "./meshStore/meshStore"
+
 function App() {
-  const meshStore = useMeshStore(state=>state.meshObjectStore)
-  const activeWires = useMeshStore(state=>state.activeWires)
-  const meshArr = meshStore.map((x,idx)=>{
-    if(x.type == "box"){
-      return <Box key={idx} position={x.pos} wireFrame={activeWires}/>
+  const meshStore = useMeshStore(state => state.meshObjectStore)
+  const activeWires = useMeshStore(state => state.activeWires)
+  const meshArr = meshStore.map((mesh) => {
+    if(mesh.type == "box"){
+      return <Box key={mesh.uid} mesh={mesh} wireFrame={activeWires}/>
     }
-    return <Rectangle key={idx} position={x.pos} wireFrame={activeWires}/>
+    return <Rectangle key={mesh.uid} mesh={mesh} wireFrame={activeWires}/>
   })
   return (
     <Canvas className="bg-black w-full h-screen">
@@ -19,6 +21,7 @@ function App() {
       <directionalLight position={[3, 2, 3]} />
 
       <Select box>{meshArr}</Select>
+      <JointHighlights />
       <OrbitControls makeDefault />
       <axesHelper args={[100]}/>
       <gridHelper />
