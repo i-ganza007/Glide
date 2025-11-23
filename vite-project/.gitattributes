@@ -1,0 +1,4 @@
+release filter=lfs diff=lfs merge=lfs -text
+dist-electron filter=lfs diff=lfs merge=lfs -text
+dist filter=lfs diff=lfs merge=lfs -text
+release/** filter=lfs diff=lfs merge=lfs -text
