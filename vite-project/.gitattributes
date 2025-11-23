@@ -1,6 +1,6 @@
 # Git LFS Configuration for Glide Tube Joint Visualizer
 
-# Track large build outputs and executables
+# Track large build outputs and executables (if needed in future)
 *.exe filter=lfs diff=lfs merge=lfs -text
 *.asar filter=lfs diff=lfs merge=lfs -text
 *.dmg filter=lfs diff=lfs merge=lfs -text
@@ -8,14 +8,8 @@
 *.deb filter=lfs diff=lfs merge=lfs -text
 *.rpm filter=lfs diff=lfs merge=lfs -text
 
-# Track release directory contents
-release/** filter=lfs diff=lfs merge=lfs -text
-
-# Optional: Track other large build artifacts
-dist/**/*.js filter=lfs diff=lfs merge=lfs -text
-dist-electron/**/*.cjs filter=lfs diff=lfs merge=lfs -text
-
 # Track common large file types (if you add them later)
 *.zip filter=lfs diff=lfs merge=lfs -text
 *.tar.gz filter=lfs diff=lfs merge=lfs -text
+*.7z filter=lfs diff=lfs merge=lfs -text
 *.7z filter=lfs diff=lfs merge=lfs -text
