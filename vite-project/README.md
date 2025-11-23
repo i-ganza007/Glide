@@ -1,73 +1,183 @@
-# React + TypeScript + Vite
+# Glide Tube Joint Visualizer
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A desktop application for visualizing and designing tube joint connections in 3D. Built with React, Three.js, and Electron.
 
-Currently, two official plugins are available:
+![Glide Tube Joint Visualizer](https://img.shields.io/badge/Platform-Windows%20%7C%20macOS%20%7C%20Linux-blue)
+![Electron](https://img.shields.io/badge/Electron-39.2.3-47848F)
+![React](https://img.shields.io/badge/React-19.2.0-61DAFB)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+##  Features
 
-## React Compiler
+- **3D Visualization**: Interactive 3D environment for tube and joint design
+- **Real-time Controls**: Adjust position, rotation, scale, color, and visibility with Leva GUI
+- **Smart Joint Detection**: Automatic detection and preview of joint connections when shapes are close
+- **Multiple Joint Types**: Support for T-joints, L-joints, Cross-joints, and Corner-joints
+- **Desktop Application**: Cross-platform desktop app with native menu and controls
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+##  Quick Start
 
-## Expanding the ESLint configuration
+### Option 1: Download Ready-to-Use App (Windows)
+1. Download the installer from the `release` folder
+2. Run `Glide Tube Joint Visualizer Setup 1.0.0.exe`
+3. Follow the installation wizard
+4. Launch the app from your desktop or start menu
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+### Option 2: Run from Source
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+#### Prerequisites
+- **Node.js** (version 16 or higher) - [Download here](https://nodejs.org/)
+- **Git** - [Download here](https://git-scm.com/)
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+#### Installation Steps
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/i-ganza007/Glide.git
+   cd Glide/vite-project
+   ```
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
+
+3. **Start the development version**
+   ```bash
+   npm run electron:dev
+   ```
+
+##  How to Use
+
+### Basic Controls
+- **Mouse**: 
+  - Left click + drag: Rotate the camera
+  - Right click + drag: Pan the camera
+  - Scroll wheel: Zoom in/out
+
+### Adding Shapes
+- Use the control panel on the right to add boxes and rectangles
+- Adjust properties like position, size, rotation, and color in real-time
+
+### Joint Preview
+- Move shapes close to each other to see automatic joint previews
+- Different joint types appear based on shape positioning:
+  - **T-Joint**: When shapes form a T-shape connection
+  - **L-Joint**: When shapes connect at a corner
+  - **Cross-Joint**: When shapes intersect perpendicularly
+  - **Corner-Joint**: When shapes meet at an angle
+
+### Menu Options
+- **File → New Project**: Reset the workspace
+- **View → Toggle Dev Tools**: Open developer tools (for debugging)
+- **View → Zoom Controls**: Adjust zoom level
+
+##  Development
+
+### Available Scripts
+
+- `npm run dev` - Start Vite development server
+- `npm run build` - Build for production
+- `npm run electron:dev` - Start Electron app in development mode
+- `npm run electron:start` - Start Electron app with built files
+- `npm run electron:pack` - Package the app without installer
+- `npm run electron:dist` - Build and create installer
+
+### Project Structure
+```
+vite-project/
+├── src/
+│   ├── Components/
+│   │   ├── Box.tsx              # 3D box component with controls
+│   │   ├── Rectangle.tsx        # 3D rectangle component
+│   │   ├── JointHighlight.tsx   # Joint preview visualization
+│   │   └── ControlPanel.tsx     # Main control interface
+│   ├── meshStore/
+│   │   └── meshStore.tsx        # State management for 3D objects
+│   ├── utils/
+│   │   └── jointDetection.ts    # Joint detection algorithms
+│   └── App.tsx                  # Main application component
+├── electron.ts                  # Electron main process
+├── dist/                        # Built React app
+├── dist-electron/              # Built Electron files
+└── release/                    # Packaged applications
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+##  Building for Distribution
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### Windows
+```bash
+npm run electron:dist
 ```
+This creates:
+- `release/win-unpacked/` - Unpacked application
+- `release/Glide Tube Joint Visualizer Setup 1.0.0.exe` - Windows installer
+
+### macOS
+```bash
+npm run electron:pack -- --mac
+```
+
+### Linux
+```bash
+npm run electron:pack -- --linux
+```
+
+##  Technologies Used
+
+- **Frontend**: React 19.2.0, TypeScript
+- **3D Graphics**: Three.js, React Three Fiber, React Three Drei
+- **Desktop**: Electron 39.2.3
+- **UI Controls**: Leva (GUI controls)
+- **State Management**: Zustand
+- **Styling**: Tailwind CSS
+- **Build Tool**: Vite
+
+##  System Requirements
+
+- **Windows**: Windows 10 or later
+- **macOS**: macOS 10.15 or later
+- **Linux**: Ubuntu 18.04 or equivalent
+- **RAM**: 4GB minimum, 8GB recommended
+- **Graphics**: DirectX 11 compatible or OpenGL 3.3 support
+
+## 🐛 Troubleshooting
+
+### Common Issues
+
+**App won't start:**
+- Make sure you have the latest Node.js installed
+- Try deleting `node_modules` and running `npm install` again
+
+**3D scene is black or not loading:**
+- Update your graphics drivers
+- Check if your browser/system supports WebGL
+
+**Development server won't start:**
+- Check if port 5173 is already in use
+- Try `npm run dev` first, then `npm run electron:start` in another terminal
+
+### Getting Help
+- Check the [Issues](https://github.com/i-ganza007/Glide/issues) page
+- Create a new issue with your problem description and system info
+
+##  Contributing
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+##  License
+
+This project is licensed under the MIT License - see the [LICENSE](../LICENSE) file for details.
+
+##  Acknowledgments
+
+- [Three.js](https://threejs.org/) for 3D graphics
+- [React Three Fiber](https://github.com/pmndrs/react-three-fiber) for React Three.js integration
+- [Electron](https://www.electronjs.org/) for desktop app framework
+- [Leva](https://github.com/pmndrs/leva) for the control interface
+
+---
+
+Made with ❤️ for tube joint visualization and design
