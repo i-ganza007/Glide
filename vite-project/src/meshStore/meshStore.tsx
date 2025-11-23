@@ -54,7 +54,7 @@ export const useMeshStore = create<MeshStore>((set) => ({
     jointPreviews: [],
     addMeshObject:  (mesh) => set((state) => ({meshObjectStore:[mesh,...state.meshObjectStore]})),
     changeActiveWires : () => set(state => ({activeWires:!state.activeWires})),
-    changeVisibleStatus: (id,newInfo) => set(state => ({})),
+    changeVisibleStatus: (_id, _newInfo) => set(() => ({})),
     updateMeshPosition: (uid, newPosition) => set(state => ({
         meshObjectStore: state.meshObjectStore.map(mesh => mesh.uid === uid ? { ...mesh, pos: newPosition } : mesh)
     })),
